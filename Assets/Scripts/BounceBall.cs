@@ -38,6 +38,10 @@ public class BounceBall : MonoBehaviour {
 			{
 				other.gameObject.GetComponent<MoveBall>().ShrinkBall();
 			}
+			else // only broadcast ball bounced if it didn't hit paddle
+			{
+				GameManager.instance.BallBounced();
+			}
 			if( impactSound != null )
 			{
 				GameManager.instance.GetAudioSource().PlayOneShot( impactSound );

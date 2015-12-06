@@ -21,6 +21,7 @@ public class Brick : MonoBehaviour {
 	{
 		if( other.gameObject.tag == "Ball" )
 		{
+			GameManager.instance.BallBounced();
 			if( !canBreak )
 			{
 				GameManager.instance.GetAudioSource().PlayOneShot( unbreakableSound );
