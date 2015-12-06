@@ -8,6 +8,9 @@
 		_LightIntensity  ( "Spotlight intensity", Vector ) = ( 1.5, 1.5, 1.5, 1 )
 		_Darkness		 ( "Darkness", Vector ) = ( 0.8, 0.8, 0.8, 1 )
 		_LightFalloff	 ( "Spotlight falloff", Float ) = 250
+		_WarpFlatness	 ( "Warp flatness", Float ) = 4.3
+		_WubTime		 ( "Wub Time (RO)", Float ) = 0
+		_WubFrequency    ( "Wub Frequency", Float ) = 0.5
 	}
 	SubShader {
 		Pass {
@@ -21,6 +24,9 @@
 			fixed4 _LightIntensity;
 			fixed4 _Darkness;
 			fixed _LightFalloff;
+			fixed _WarpFlatness;
+			fixed _WubFrequency;
+			fixed _WubTime;
 			
 			#pragma vertex vert
 			#pragma fragment frag
@@ -47,10 +53,32 @@
 				float4 lit = base * lerp( _Darkness, _LightIntensity, gradient );
 				return lit;
 			}
+
+			float4 warp( float4 pos, fixed wf )
+			{
+				float4 warped = ( pos - 0.5 ) * 2.0;
+
+				float4 offs = (0,0,0,0);
+				offs.x = ( 1.0 - warped.y * warped.y) * wf * (warped.x); 
+				offs.y = ( 1.0 - warped.x * warped.x) * wf * (warped.y);
+
+				warped += offs;
+
+				warped = ( warped / 2.0 ) + 0.5;
+				return warped;
+			}
+
+			float4 wub( float4 pos )
+			{
+				fixed MAX_FLATNESS = 0.05;
+				return warp( pos, lerp( _WarpFlatness, MAX_FLATNESS, _WubTime / _WubFrequency ) );
+			}
 			
 			fixed4 frag ( VS_OUT i ) : SV_Target
 			{
-				fixed4 screen = float4( _ScreenParams.xy * i.clip.xy / i.clip.w, 0, 1 );
+				// wub wub wub
+				fixed4 warped = wub( float4( i.clip.xy / i.clip.w, 0, 1 ) );
+				fixed4 screen = float4( _ScreenParams.xy * warped.xy, 0, 1 );
 				float4 OutColor = ( 0, 0, 0, 1 );
 
 				// render gridlines
