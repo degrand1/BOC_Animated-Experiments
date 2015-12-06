@@ -8,7 +8,7 @@
 		_LightIntensity  ( "Spotlight intensity", Vector ) = ( 1.5, 1.5, 1.5, 1 )
 		_Darkness		 ( "Darkness", Vector ) = ( 0.8, 0.8, 0.8, 1 )
 		_LightFalloff	 ( "Spotlight falloff", Float ) = 250
-		_WarpFlatness	 ( "Warp flatness", Float ) = 4.3
+		_WarpFactor		 ( "Warp factor", Float ) = 0.05
 		_WubTime		 ( "Wub Time (RO)", Float ) = 0
 		_WubFrequency    ( "Wub Frequency", Float ) = 0.5
 	}
@@ -24,7 +24,7 @@
 			fixed4 _LightIntensity;
 			fixed4 _Darkness;
 			fixed _LightFalloff;
-			fixed _WarpFlatness;
+			fixed _WarpFactor;
 			fixed _WubFrequency;
 			fixed _WubTime;
 			
@@ -56,22 +56,19 @@
 
 			float4 warp( float4 pos, fixed wf )
 			{
-				float4 warped = ( pos - 0.5 ) * 2.0;
+				float4 coords = ( pos - 0.5 ) * 2.0;
 
 				float4 offs = (0,0,0,0);
-				offs.x = ( 1.0 - warped.y * warped.y) * wf * (warped.x); 
-				offs.y = ( 1.0 - warped.x * warped.x) * wf * (warped.y);
+				offs.x = ( 1.0 - coords.y * coords.y) * wf * (coords.x); 
+				offs.y = ( 1.0 - coords.x * coords.x) * wf * (coords.y);
+				coords += offs;
 
-				warped += offs;
-
-				warped = ( warped / 2.0 ) + 0.5;
-				return warped;
+				return ( coords / 2.0 ) + 0.5;
 			}
 
 			float4 wub( float4 pos )
 			{
-				fixed MAX_FLATNESS = 0.05;
-				return warp( pos, lerp( _WarpFlatness, MAX_FLATNESS, _WubTime / _WubFrequency ) );
+				return warp( pos, lerp( -_WarpFactor, _WarpFactor, _WubTime / _WubFrequency ) );
 			}
 			
 			fixed4 frag ( VS_OUT i ) : SV_Target
