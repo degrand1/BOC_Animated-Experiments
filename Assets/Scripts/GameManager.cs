@@ -36,6 +36,9 @@ public class GameManager : MonoBehaviour {
 		audio.Play();
 	}
 
+	public delegate void BallBounceListener();
+	public event BallBounceListener onBallBounce;
+
 	void Awake() 
 	{
 		if( instance == null )
@@ -152,5 +155,10 @@ public class GameManager : MonoBehaviour {
 		Instantiate( deathParticles, playerClone.transform.position, Quaternion.identity );
 		Destroy( playerClone );
 		audio.PlayOneShot( deathSound );
+	}
+
+	public void BallBounced()
+	{
+		if ( onBallBounce != null ) onBallBounce();
 	}
 }

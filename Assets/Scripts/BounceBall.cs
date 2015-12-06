@@ -29,6 +29,7 @@ public class BounceBall : MonoBehaviour {
 	{
 		if( other.gameObject.tag == "Ball" )
 		{
+			GameManager.instance.BallBounced();
 			Vector3 reflectedVector = Vector3.Reflect( other.relativeVelocity, other.contacts[0].normal );
 			reflectedVector *=Random.Range (minBounceStrength,maxBounceStrength);
 			reflectedVector.x = AbsoluteClamp( reflectedVector.x, minXSpeed, maxXSpeed );
