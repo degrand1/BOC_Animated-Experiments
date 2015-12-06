@@ -13,9 +13,9 @@ public class DynamicBackground : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if( player == null ) player = GameObject.FindGameObjectWithTag( "Player" );
-		if( ball == null ) ball = GameObject.FindGameObjectWithTag( "Ball" );
-		bg.material.SetVector("_PlayerPosition", Camera.main.WorldToScreenPoint( player.transform.position ) );
-		bg.material.SetVector("_BallPosition", Camera.main.WorldToScreenPoint( ball.transform.position ) );
+		if ( player == null ) player = GameObject.FindGameObjectWithTag( "Player" );
+		if ( ball == null ) ball = GameObject.FindGameObjectWithTag( "Ball" );
+		if ( player != null ) bg.material.SetVector("_PlayerPosition", Camera.main.WorldToScreenPoint( player.transform.position ) );
+		if ( ball != null ) bg.material.SetVector("_BallPosition", Camera.main.WorldToScreenPoint( ball.transform.position ) );
 	}
 }
