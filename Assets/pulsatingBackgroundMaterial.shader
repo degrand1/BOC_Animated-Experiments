@@ -36,14 +36,16 @@
 
 			struct VS_OUT {
 				float4 pos:SV_POSITION;
-				float4 clip;
+				float4 clip:TEXCOORD0;
+				float4 color:COLOR;
 			};
 
-			VS_OUT vert ( appdata_base v ): POSITION
+			VS_OUT vert ( appdata_base v )
 			{
 				VS_OUT o;
 				o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.clip = ComputeScreenPos( o.pos );
+				o.color = float4( 0, 0, 0, 1 );
 				return o;
 			}
 
@@ -58,7 +60,7 @@
 			{
 				float4 coords = ( pos - 0.5 ) * 2.0;
 
-				float4 offs = (0,0,0,0);
+				float4 offs = float4(0,0,0,0);
 				offs.x = ( 1.0 - coords.y * coords.y) * wf * (coords.x); 
 				offs.y = ( 1.0 - coords.x * coords.x) * wf * (coords.y);
 				coords += offs;
@@ -76,7 +78,7 @@
 				// wub wub wub
 				fixed4 warped = wub( float4( i.clip.xy / i.clip.w, 0, 1 ) );
 				fixed4 screen = float4( _ScreenParams.xy * warped.xy, 0, 1 );
-				float4 OutColor = ( 0, 0, 0, 1 );
+				float4 OutColor = float4( 0, 0, 0, 1 );
 
 				// render gridlines
 				if ( floor( screen.y ) % 40 == 0 || floor( screen.x ) % 40 == 0 )
