@@ -9,8 +9,8 @@
 		_Darkness		 ( "Darkness", Vector ) = ( 0.55, 0.55, 0.55, 1 )
 		_LightFalloff	 ( "Spotlight falloff", Float ) = 100
 		_WarpFactor		 ( "Warp factor", Float ) = 0.05
-		_WubTime		 ( "Wub Time (RO)", Float ) = 0
-		_WubFrequency    ( "Wub Frequency", Float ) = 0.25
+		_WubTime		 ( "Wub Time (Write Only via DynamicBackground)", Float ) = 0
+		_WubBeat         ( "Wub Beat (Write Only via DynamicBackground)", Float ) = 0.25
 	}
 	SubShader {
 		Pass {
@@ -25,7 +25,7 @@
 			fixed4 _Darkness;
 			fixed _LightFalloff;
 			fixed _WarpFactor;
-			fixed _WubFrequency;
+			fixed _WubBeat;
 			fixed _WubTime;
 			
 			#pragma vertex vert
@@ -70,16 +70,9 @@
 
 			float4 wub( float4 pos )
 			{
-				return warp( pos, lerp( -_WarpFactor, _WarpFactor, _WubTime / _WubFrequency ) );
+				return warp( pos, lerp( -_WarpFactor, _WarpFactor, _WubTime / _WubBeat ) );
 			}
 
-/*
-			float easeInOutQuad( x, t, c ) {
-				if ((t/=1/2) < 1) return c/2*t*t;
-				return -c/2 * ((--t)*(t-2) - 1);
-			},
-			*/
-			
 			fixed4 frag ( VS_OUT i ) : SV_Target
 			{
 				// wub wub wub
