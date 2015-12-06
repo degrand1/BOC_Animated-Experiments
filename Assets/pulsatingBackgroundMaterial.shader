@@ -28,33 +28,42 @@
 			
 			#include "UnityCG.cginc"
 
-			float4 vert (appdata_base v): POSITION
+			struct VS_OUT {
+				float4 pos:SV_POSITION;
+				float4 clip;
+			};
+
+			VS_OUT vert ( appdata_base v ): POSITION
 			{
-				return mul (UNITY_MATRIX_MVP, v.vertex);
+				VS_OUT o;
+				o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+				o.clip = ComputeScreenPos( o.pos );
+				return o;
 			}
 
-			float4 spotlight (float4 base, float4 pos, float4 lightPos)
+			float4 spotlight ( float4 base, float4 pos, float4 lightPos )
 			{
 				float gradient = 1 - ( clamp( distance( pos.xy, lightPos.xy ), 0, _LightFalloff ) / _LightFalloff );
 				float4 lit = base * lerp( _Darkness, _LightIntensity, gradient );
 				return lit;
 			}
 			
-			fixed4 frag (float4 pos:VPOS) : SV_Target
+			fixed4 frag ( VS_OUT i ) : SV_Target
 			{
+				fixed4 screen = float4( _ScreenParams.xy * i.clip.xy / i.clip.w, 0, 1 );
 				float4 OutColor = ( 0, 0, 0, 1 );
 
 				// render gridlines
-				if ( floor( pos.y ) % 40 == 0 || floor( pos.x ) % 40 == 0 )
+				if ( floor( screen.y ) % 40 == 0 || floor( screen.x ) % 40 == 0 )
 					OutColor = _BrightLineColor;
-				else if ( floor( pos.y ) % 10 == 0 || floor( pos.x ) % 10 == 0 )
+				else if ( floor( screen.y ) % 10 == 0 || floor( screen.x ) % 10 == 0 )
 					OutColor = _DarkLineColor;
 				else
 					OutColor = _BGColor;
 
 				// spotlight on player and ball position
-				OutColor = spotlight( OutColor, pos, _PlayerPosition );
-				OutColor = spotlight( OutColor, pos, _BallPosition );
+				OutColor = spotlight( OutColor, screen, _PlayerPosition );
+				OutColor = spotlight( OutColor, screen, _BallPosition );
 
 				return OutColor;
 			}
