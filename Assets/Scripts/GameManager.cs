@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour {
 	public float reviveDelay = 1.0f;
 	public AudioClip deathSound;
 	public AudioClip gameOverSound;
+	public AudioClip[] songs;
 	public static GameManager instance = null;
 
 	private int bricks;
@@ -24,11 +25,23 @@ public class GameManager : MonoBehaviour {
 	private PersistentData data = null;
 	private Text livesText;
 
+	void PlaySong()
+	{
+		if( audio == null )
+		{
+			audio = GetComponent<AudioSource>();
+		}
+		int randClip = Random.Range (0, songs.Length);
+		audio.clip = songs[randClip];
+		audio.Play();
+	}
+
 	void Awake() 
 	{
 		if( instance == null )
 		{
 			instance = this;
+			PlaySong();
 		}
 		else if( instance != this )
 		{
@@ -58,7 +71,6 @@ public class GameManager : MonoBehaviour {
 	void Start()
 	{
 		data = gameObject.GetComponent<PersistentData>();
-		audio = GetComponent<AudioSource>();
 		originalDestroyTime = deathParticles.GetComponent<DeleteAfterElapsedTime>().destroyTime;
 		startingLives = data.lives;
 		Setup();

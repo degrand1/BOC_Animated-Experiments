@@ -14,11 +14,11 @@ public class DynamicBackground : MonoBehaviour {
 		acc = 0.0f;
 		dir = 1.0f;
 		bg = GetComponent<Renderer> ();
-		freq = bg.material.GetFloat ("_WubFrequency");
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		freq = bg.material.GetFloat ("_WubFrequency");
 		acc += dir * Time.deltaTime;
 		if ( dir > 0 && acc > freq )  dir = -1;
 		if ( dir < 0 && acc < 0 )  dir = 1;
