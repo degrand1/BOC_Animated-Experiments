@@ -21,12 +21,19 @@ public class DynamicBackground : MonoBehaviour {
 	void Update () {
 		bg.material.SetFloat ("_WubBeat", wubBeat);
 		acc += dir * Time.deltaTime;
-		if ( dir > 0 && acc > wubBeat )  dir = -1;
-		if ( dir < 0 && acc < 0 )  dir = 1;
+		if (wubDelay <= 0) {
+			bg.material.SetFloat ("_WubTime", acc);
+			if (dir > 0 && acc > wubBeat)
+				dir = -1;
+			if (dir < 0 && acc < 0)
+				dir = 1;
+		} else if ( acc >= wubDelay ) {
+			wubDelay = 0;
+			acc = 0;
+		}
 		if ( player == null ) player = GameObject.FindGameObjectWithTag( "Player" );
 		if ( ball == null ) ball = GameObject.FindGameObjectWithTag( "Ball" );
 		if ( player != null ) bg.material.SetVector("_PlayerPosition", Camera.main.WorldToScreenPoint( player.transform.position ) );
 		if ( ball != null ) bg.material.SetVector("_BallPosition", Camera.main.WorldToScreenPoint( ball.transform.position ) );
-		bg.material.SetFloat("_WubTime", acc );
 	}
 }
