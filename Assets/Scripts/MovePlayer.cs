@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class MovePlayer : MonoBehaviour {
@@ -19,7 +19,6 @@ public class MovePlayer : MonoBehaviour {
 
 	void Start()
 	{
-		playerRenderer = gameObject.GetComponent<Renderer>();
 		if( leftWall == null )
 		{
 			leftWall = GameObject.FindGameObjectWithTag( "LeftWall" );
