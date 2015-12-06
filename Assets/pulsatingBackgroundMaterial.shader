@@ -5,6 +5,9 @@
 		_DarkLineColor   ( "Line color 2", Color )     = ( .07, 0, .27, 1 )
 		_PlayerPosition  ( "Player position", Vector ) = ( 0, 0, 0, 1 )
 		_BallPosition    ( "Ball position", Vector )   = ( 100, 500, 0, 1 )
+		_LightIntensity  ( "Spotlight intensity", Vector ) = ( 1.5, 1.5, 1.5, 1 )
+		_Darkness		 ( "Darkness", Vector ) = ( 0.8, 0.8, 0.8, 1 )
+		_LightFalloff	 ( "Spotlight falloff", Float ) = 250
 	}
 	SubShader {
 		Pass {
@@ -15,6 +18,9 @@
 			fixed4 _DarkLineColor;
 			fixed4 _PlayerPosition;
 			fixed4 _BallPosition;
+			fixed4 _LightIntensity;
+			fixed4 _Darkness;
+			fixed _LightFalloff;
 			
 			#pragma vertex vert
 			#pragma fragment frag
@@ -29,14 +35,8 @@
 
 			float4 spotlight (float4 base, float4 pos, float4 lightPos)
 			{
-				// TODO move me up to properties
-				fixed4 light = fixed4( 1.5, 1.5, 1.5, 1 );
-				fixed4 darkness = 2 / light; // darkness not as strong as light
-				float falloff = 250;
-
-				float spot = 1 - ( clamp( distance( pos.xy, lightPos.xy ), 0, falloff ) / falloff );
-
-				float4 lit = base * darkness * mul( spot, light );
+				float gradient = 1 - ( clamp( distance( pos.xy, lightPos.xy ), 0, _LightFalloff ) / _LightFalloff );
+				float4 lit = base * lerp( _Darkness, _LightIntensity, gradient );
 				return lit;
 			}
 			
