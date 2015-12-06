@@ -10,8 +10,6 @@ public class MoveBall : MonoBehaviour {
 	private Rigidbody rigidBody;
 	private bool ballIsActive;
 	private float shrinkBallTimer;
-	private Vector3 originalScale;
-	private Vector3 originalVelocity;
 
 	//Shrink the ball after a collision occurs
 	public void ShrinkBall()
@@ -19,13 +17,12 @@ public class MoveBall : MonoBehaviour {
 		if( shrinkBallTimer == 0 )
 		{
 			shrinkBallTimer = shrinkTimeAfterCollision;
-			/*
-			originalScale = transform.localScale;
-			originalVelocity = transform.GetComponent<Rigidbody>().velocity;
-			transform.localScale -= new Vector3( transform.localScale.x/2, transform.localScale.y/2, 0 );
-			transform.GetComponent<Rigidbody>().velocity -= new Vector3( originalVelocity.x/2, originalVelocity.y/2, 0 );
-			*/
 		}
+	}
+
+	public bool GetIsBallActive()
+	{
+		return ballIsActive;
 	}
 
 	void Awake () {
@@ -40,7 +37,14 @@ public class MoveBall : MonoBehaviour {
 			transform.parent = null;
 			ballIsActive = true;
 			rigidBody.isKinematic = false;
+			transform.localScale = new Vector3( 1.0f, 1.0f, 1.0f );
 			rigidBody.AddForce( initialBallVelocity );
+		}
+		else if( !ballIsActive )
+		{
+			transform.localScale = new Vector3( 1f/transform.parent.localScale.x, 
+			                                    1f/transform.parent.localScale.y, 
+			                                    1f/transform.parent.localScale.z );
 		}
 		if( shrinkBallTimer != 0 )
 		{
@@ -48,10 +52,6 @@ public class MoveBall : MonoBehaviour {
 			if( shrinkBallTimer <= 0 )
 			{
 				shrinkBallTimer = 0f;
-				/*
-				transform.localScale = originalScale;
-				transform.GetComponent<Rigidbody>().velocity = originalVelocity;
-				*/
 			}
 		}
 	}
