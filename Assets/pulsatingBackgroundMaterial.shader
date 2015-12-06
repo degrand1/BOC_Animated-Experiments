@@ -5,12 +5,12 @@
 		_DarkLineColor   ( "Line color 2", Color )     = ( .07, 0, .27, 1 )
 		_PlayerPosition  ( "Player position", Vector ) = ( 0, 0, 0, 1 )
 		_BallPosition    ( "Ball position", Vector )   = ( 100, 500, 0, 1 )
-		_LightIntensity  ( "Spotlight intensity", Vector ) = ( 1.5, 1.5, 1.5, 1 )
-		_Darkness		 ( "Darkness", Vector ) = ( 0.8, 0.8, 0.8, 1 )
-		_LightFalloff	 ( "Spotlight falloff", Float ) = 250
+		_LightIntensity  ( "Spotlight intensity", Vector ) = ( 1.8, 1.8, 1.8, 1 )
+		_Darkness		 ( "Darkness", Vector ) = ( 0.55, 0.55, 0.55, 1 )
+		_LightFalloff	 ( "Spotlight falloff", Float ) = 100
 		_WarpFactor		 ( "Warp factor", Float ) = 0.05
 		_WubTime		 ( "Wub Time (RO)", Float ) = 0
-		_WubFrequency    ( "Wub Frequency", Float ) = 0.5
+		_WubFrequency    ( "Wub Frequency", Float ) = 0.25
 	}
 	SubShader {
 		Pass {
@@ -72,6 +72,13 @@
 			{
 				return warp( pos, lerp( -_WarpFactor, _WarpFactor, _WubTime / _WubFrequency ) );
 			}
+
+/*
+			float easeInOutQuad( x, t, c ) {
+				if ((t/=1/2) < 1) return c/2*t*t;
+				return -c/2 * ((--t)*(t-2) - 1);
+			},
+			*/
 			
 			fixed4 frag ( VS_OUT i ) : SV_Target
 			{

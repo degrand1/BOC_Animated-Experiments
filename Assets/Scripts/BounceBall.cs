@@ -29,6 +29,7 @@ public class BounceBall : MonoBehaviour {
 	{
 		if( other.gameObject.tag == "Ball" )
 		{
+			GameManager.instance.BallBounced();
 			Vector3 reflectedVector = Vector3.Reflect( other.relativeVelocity, other.contacts[0].normal );
 			reflectedVector *=Random.Range (minBounceStrength,maxBounceStrength);
 			reflectedVector.x = AbsoluteClamp( reflectedVector.x, minXSpeed, maxXSpeed );
@@ -37,10 +38,6 @@ public class BounceBall : MonoBehaviour {
 			if( gameObject.tag == "Player" )
 			{
 				other.gameObject.GetComponent<MoveBall>().ShrinkBall();
-			}
-			else // only broadcast ball bounced if it didn't hit paddle
-			{
-				GameManager.instance.BallBounced();
 			}
 			if( impactSound != null )
 			{
