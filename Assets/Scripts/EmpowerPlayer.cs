@@ -15,6 +15,15 @@ public class EmpowerPlayer : MonoBehaviour {
 		anim = GameObject.FindGameObjectWithTag( "Player" ).GetComponent<Animator>();
 	}
 
+	void SetAnimation( string Name, bool Value )
+	{
+		if( anim == null )
+		{
+			anim = GameObject.FindGameObjectWithTag( "Player" ).GetComponent<Animator>();
+		}
+		anim.SetBool( Name, Value );
+	}
+
 	public void GrantPower( PowerUp powerUp )
 	{
 		if( currentPower == powerUp )
@@ -32,7 +41,7 @@ public class EmpowerPlayer : MonoBehaviour {
 			currentTime = 0.0f;
 			powerActive = true;
 			currentPower = powerUp;
-			anim.SetBool ( "IncreaseLength", true );
+			SetAnimation( "IncreaseLength", true );
 			break;
 		}
 	}
@@ -57,7 +66,7 @@ public class EmpowerPlayer : MonoBehaviour {
 			if( currentTime >= increaseLengthTime )
 			{
 				Reset();
-				anim.SetBool ( "IncreaseLength", false );
+				SetAnimation ( "IncreaseLength", false );
 			}
 			break;
 		}

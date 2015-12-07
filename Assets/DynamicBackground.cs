@@ -7,8 +7,6 @@ public class DynamicBackground : MonoBehaviour {
 	private GameObject ball;
 	private float acc;
 	private float dir;
-	public float wubDelay;
-	public float wubBeat;
 
 	// Use this for initialization
 	void Start () {
@@ -19,7 +17,9 @@ public class DynamicBackground : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		bg.material.SetFloat ("_WubBeat", wubBeat);
+		float wubDelay = GameManager.instance.GetWubDelay();
+		float wubBeat = GameManager.instance.GetWubFrequency();
+		bg.material.SetFloat ("_WubBeat", wubBeat );
 		acc += dir * Time.deltaTime;
 		if (wubDelay <= 0) {
 			bg.material.SetFloat ("_WubTime", acc);

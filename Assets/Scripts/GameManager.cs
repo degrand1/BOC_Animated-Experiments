@@ -1,11 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.UI;
 
 // A singleton class used to keep track of gameover logic, load subsequent levels, and store persistent data
 
 public class GameManager : MonoBehaviour {
-	
+
+	[System.Serializable] public class Songs {
+		public AudioClip songFile;
+		public float wubFrequency;
+		public float wubDelay;
+	}
+
 	public GameObject deathParticles;
 	public GameObject player;
 	public string nextLevel;
@@ -13,17 +20,26 @@ public class GameManager : MonoBehaviour {
 	public float reviveDelay = 1.0f;
 	public AudioClip deathSound;
 	public AudioClip gameOverSound;
-	public AudioClip[] songs;
+	public Songs[] songs;
 	public static GameManager instance = null;
 
 	private int bricks;
 	private int startingLives;
+	private int currentClip;
 	private float originalDestroyTime;
 	private float gameOverTime = 6.0f;
 	private GameObject playerClone;
-	private AudioSource audio;
+	private AudioSource audio = null;
 	private PersistentData data = null;
 	private Text livesText;
+	private LinkedList<int> SongIndexList = null;
+
+	void RefillSongs()
+	{
+		if( SongIndexList.Count > 0) return;
+		for(int i = 0; i < songs.Length; i++ )
+			SongIndexList.AddLast( i );
+	}
 
 	void PlaySong()
 	{
@@ -31,9 +47,31 @@ public class GameManager : MonoBehaviour {
 		{
 			audio = GetComponent<AudioSource>();
 		}
-		int randClip = Random.Range (0, songs.Length);
-		audio.clip = songs[randClip];
+		if( SongIndexList == null )
+		{
+			SongIndexList = new LinkedList<int>();
+		}
+		RefillSongs();
+		int randomIndex = Random.Range (0, SongIndexList.Count);
+		int[] intArray = new int[SongIndexList.Count];
+		SongIndexList.CopyTo(intArray, 0);
+		LinkedListNode<int> node = SongIndexList.Find(intArray[randomIndex]);
+		SongIndexList.Remove(node);
+		currentClip = node.Value;
+		audio.clip = songs[currentClip].songFile;
 		audio.Play();
+		//Play the next song after this one ends
+		Invoke ( "PlaySong", audio.clip.length );
+	}
+
+	public float GetWubFrequency()
+	{
+		return songs[currentClip].wubFrequency;
+	}
+
+	public float GetWubDelay()
+	{
+		return songs[currentClip].wubDelay;
 	}
 
 	public delegate void BallBounceListener();
