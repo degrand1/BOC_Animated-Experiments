@@ -38,6 +38,7 @@ public class BounceBall : MonoBehaviour {
 			if( gameObject.tag == "Player" )
 			{
 				other.gameObject.GetComponent<MoveBall>().ShrinkBall();
+				other.gameObject.GetComponentInChildren<Animator>().SetTrigger( "StartImpact" );
 			}
 			if( impactSound != null )
 			{
