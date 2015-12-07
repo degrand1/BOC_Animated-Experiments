@@ -5,21 +5,11 @@ public class MoveBall : MonoBehaviour {
 
 	public Vector2 initialBallVelocity = new Vector2( 700f, 500f );
 	public string fireBallKey = "Fire1";
-	public float shrinkTimeAfterCollision = 2.0f;
 	public TrailRenderer trail;
 
 	private Rigidbody rigidBody;
 	private bool ballIsActive;
-	private float shrinkBallTimer;
-
-	//Shrink the ball after a collision occurs
-	public void ShrinkBall()
-	{
-		if( shrinkBallTimer == 0 )
-		{
-			shrinkBallTimer = shrinkTimeAfterCollision;
-		}
-	}
+	
 
 	public bool GetIsBallActive()
 	{
@@ -28,7 +18,6 @@ public class MoveBall : MonoBehaviour {
 
 	void Awake () {
 		rigidBody = GetComponent<Rigidbody>();
-		shrinkBallTimer = 0f;
 	}
 
 	void Update () {
@@ -41,15 +30,6 @@ public class MoveBall : MonoBehaviour {
 			transform.localScale = new Vector3( 1.0f, 1.0f, 1.0f );
 			rigidBody.AddForce( initialBallVelocity );
 			trail.time = 0.5f;
-		}
-
-		if( shrinkBallTimer != 0 )
-		{
-			shrinkBallTimer -= Time.deltaTime;
-			if( shrinkBallTimer <= 0 )
-			{
-				shrinkBallTimer = 0f;
-			}
 		}
 	}
 }

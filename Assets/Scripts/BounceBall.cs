@@ -35,11 +35,7 @@ public class BounceBall : MonoBehaviour {
 			reflectedVector.x = AbsoluteClamp( reflectedVector.x, minXSpeed, maxXSpeed );
 			reflectedVector.y = AbsoluteClamp( reflectedVector.y, minYSpeed, maxYSpeed );
 			other.transform.GetComponent<Rigidbody>().velocity = reflectedVector;
-			if( gameObject.tag == "Player" )
-			{
-				other.gameObject.GetComponent<MoveBall>().ShrinkBall();
-				other.gameObject.GetComponentInChildren<Animator>().SetTrigger( "StartImpact" );
-			}
+
 			if( impactSound != null )
 			{
 				GameManager.instance.GetAudioSource().PlayOneShot( impactSound );
