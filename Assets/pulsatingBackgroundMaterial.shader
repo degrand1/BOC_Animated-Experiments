@@ -4,7 +4,9 @@
 		_BrightLineColor ( "Line color", Color )       = ( .13, 0, .52, 1 )
 		_DarkLineColor   ( "Line color 2", Color )     = ( .07, 0, .27, 1 )
 		_PlayerPosition  ( "Player position", Vector ) = ( 0, 0, 0, 1 )
+        _PlayerColor     ( "Player color", Color )     = ( 1, 0.47, 0.47, 1 )
 		_BallPosition    ( "Ball position", Vector )   = ( 100, 500, 0, 1 )
+        _BallColor       ( "Ball color", Color )       = ( 0.39, 0.90, 1, 1 )
 		_LightIntensity  ( "Spotlight intensity", Vector ) = ( 1.8, 1.8, 1.8, 1 )
 		_Darkness		 ( "Darkness", Vector ) = ( 0.55, 0.55, 0.55, 1 )
 		_LightFalloff	 ( "Spotlight falloff", Float ) = 100
@@ -21,6 +23,8 @@
 			fixed4 _DarkLineColor;
 			fixed4 _PlayerPosition;
 			fixed4 _BallPosition;
+			fixed4 _PlayerColor;
+			fixed4 _BallColor;
 			fixed4 _LightIntensity;
 			fixed4 _Darkness;
 			fixed _LightFalloff;
@@ -49,10 +53,14 @@
 				return o;
 			}
 
-			float4 spotlight ( float4 base, float4 pos, float4 lightPos )
+			float4 spotlight ( float4 base, float4 pos, float4 lightPos, float4 color )
 			{
 				float gradient = 1 - ( clamp( distance( pos.xy, lightPos.xy ), 0, _LightFalloff ) / _LightFalloff );
 				float4 lit = base * lerp( _Darkness, _LightIntensity, gradient );
+
+                // afterglow -- we couldn't accomplish this in the bloom
+                lit += 0.35 * pow( gradient, 2.8 ) * color;
+
 				return lit;
 			}
 
@@ -89,8 +97,8 @@
 					OutColor = _BGColor;
 
 				// spotlight on player and ball position
-				OutColor = spotlight( OutColor, screen, _PlayerPosition );
-				OutColor = spotlight( OutColor, screen, _BallPosition );
+				OutColor = spotlight( OutColor, screen, _PlayerPosition, _PlayerColor );
+				OutColor = spotlight( OutColor, screen, _BallPosition, _BallColor );
 
 				return OutColor;
 			}
