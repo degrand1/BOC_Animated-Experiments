@@ -24,10 +24,6 @@
 	        VS_OUT vert( appdata_img v )
             {
 	            VS_OUT o;
-	            #if UNITY_UV_STARTS_AT_TOP
-	            if (_MainTex_TexelSize.y < 0)
-	                    v.texcoord.y = 1-v.texcoord.y;
-	            #endif
 	           
 	            o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 	            o.uv = v.texcoord;
