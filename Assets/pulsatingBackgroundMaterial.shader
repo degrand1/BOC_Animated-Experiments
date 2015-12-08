@@ -34,7 +34,6 @@
 			
 			#pragma vertex vert
 			#pragma fragment frag
-			#pragma target 3.0
 			
 			#include "UnityCG.cginc"
 
@@ -60,8 +59,7 @@
 				float4 lit = base * lerp( _Darkness, _LightIntensity, gradient );
 
                 // afterglow -- we couldn't accomplish this in the bloom
-                lit += 0.35 * pow( gradient, 2.8 ) * color;
-
+                lit += clamp( ( 0.35 * pow( gradient, 2.8 ) * color ), fixed4( 0, 0, 0, 1 ), fixed4( 1, 1, 1, 1 ) );
 				return lit;
 			}
 
