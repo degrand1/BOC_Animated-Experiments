@@ -9,7 +9,7 @@
         _BallColor       ( "Ball color", Color )       = ( 0.39, 0.90, 1, 1 )
 		_LightIntensity  ( "Spotlight intensity", Vector ) = ( 1.8, 1.8, 1.8, 1 )
 		_Darkness		 ( "Darkness", Vector ) = ( 0.55, 0.55, 0.55, 1 )
-		_LightFalloff	 ( "Spotlight falloff", Float ) = 100
+		_LightFalloff	 ( "Spotlight falloff", Float ) = 0.12
 		_WarpFactor		 ( "Warp factor", Float ) = 0.05
 		_WubTime		 ( "Wub Time (Write Only via DynamicBackground)", Float ) = 0
 		_WubBeat         ( "Wub Beat (Write Only via DynamicBackground)", Float ) = 0.25
@@ -55,7 +55,8 @@
 
 			float4 spotlight ( float4 base, float4 pos, float4 lightPos, float4 color )
 			{
-				float gradient = 1 - ( clamp( distance( pos.xy, lightPos.xy ), 0, _LightFalloff ) / _LightFalloff );
+                fixed falloffScreenSize = _ScreenParams.x * _LightFalloff;
+				float gradient = 1 - ( clamp( distance( pos.xy, lightPos.xy ), 0, falloffScreenSize ) / falloffScreenSize );
 				float4 lit = base * lerp( _Darkness, _LightIntensity, gradient );
 
                 // afterglow -- we couldn't accomplish this in the bloom
@@ -97,8 +98,9 @@
 					OutColor = _BGColor;
 
 				// spotlight on player and ball position
-				OutColor = spotlight( OutColor, screen, _PlayerPosition, _PlayerColor );
-				OutColor = spotlight( OutColor, screen, _BallPosition, _BallColor );
+                fixed4 prewarp = float4( i.clip.xy / i.clip.w * _ScreenParams.xy, 0, 1);
+				OutColor = spotlight( OutColor, prewarp, _PlayerPosition, _PlayerColor );
+				OutColor = spotlight( OutColor, prewarp, _BallPosition, _BallColor );
 
 				return OutColor;
 			}
