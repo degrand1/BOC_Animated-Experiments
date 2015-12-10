@@ -27,7 +27,7 @@ public class DramaticZoom : MonoBehaviour {
 	void Update () {
 		if ( ball == null ) ball = GameObject.FindGameObjectWithTag ("Ball");
 		if (acc < duration) {
-			acc += Time.deltaTime;
+			acc += Time.deltaTime / Time.timeScale;
 			float eased = Easing.Sine.InOut (acc / duration); // between 0 and 1
 			float inflect = Mathf.Abs (eased - 0.5f); // map 0 -> 1 monotonic function to 0.5 -> 0 -> 0.5 function
 			float weight = inflect * (1 - minTimeScale) / 0.5f + minTimeScale; // map 0.5 -> 0 -> 0.5 to 1 -> minTimeScale -> 1
