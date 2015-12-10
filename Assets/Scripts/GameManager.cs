@@ -29,7 +29,7 @@ public class GameManager : MonoBehaviour {
 	private float originalDestroyTime;
 	private float gameOverTime = 6.0f;
 	private GameObject playerClone;
-	private AudioSource audio = null;
+	new private AudioSource audio = null;
 	private PersistentData data = null;
 	private Text livesText;
 	private LinkedList<int> SongIndexList = null;
