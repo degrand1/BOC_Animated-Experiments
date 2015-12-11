@@ -45,8 +45,12 @@ public class Brick : MonoBehaviour {
 					}
 					GameManager.instance.DestroyBrick();
 					GameManager.instance.GetAudioSource().PlayOneShot( impactSound );
-					bricksLeft--;
 					Destroy(gameObject);
+
+					bricksLeft--;
+					if ( bricksLeft == 1 ) {
+						GameManager.instance.PenultimateBrickDestroyed();
+					}
 				}
 				else
 				{

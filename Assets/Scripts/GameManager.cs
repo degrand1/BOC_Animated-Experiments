@@ -33,6 +33,11 @@ public class GameManager : MonoBehaviour {
 	private PersistentData data = null;
 	private Text livesText;
 	private LinkedList<int> SongIndexList = null;
+	
+	public delegate void BallBounceListener();
+	public event BallBounceListener onBallBounce;
+	public delegate void FinalBrickListener( GameObject finalBrick );
+	public event FinalBrickListener onFinalBrick;
 
 	void RefillSongs()
 	{
@@ -73,9 +78,6 @@ public class GameManager : MonoBehaviour {
 	{
 		return songs[currentClip].wubDelay;
 	}
-
-	public delegate void BallBounceListener();
-	public event BallBounceListener onBallBounce;
 
 	void Awake() 
 	{
@@ -198,5 +200,11 @@ public class GameManager : MonoBehaviour {
 	public void BallBounced()
 	{
 		if ( onBallBounce != null ) onBallBounce();
+	}
+
+	public void PenultimateBrickDestroyed()
+	{
+		if (onFinalBrick != null)
+			onFinalBrick( GameObject.FindGameObjectWithTag( "Brick" ) );
 	}
 }
