@@ -36,7 +36,7 @@ public class GameManager : MonoBehaviour {
 	
 	public delegate void BallBounceListener();
 	public event BallBounceListener onBallBounce;
-	public delegate void FinalBrickListener( GameObject finalBrick );
+	public delegate void FinalBrickListener();
 	public event FinalBrickListener onFinalBrick;
 
 	void RefillSongs()
@@ -204,7 +204,8 @@ public class GameManager : MonoBehaviour {
 
 	public void PenultimateBrickDestroyed()
 	{
-		if (onFinalBrick != null)
-			onFinalBrick( GameObject.FindGameObjectWithTag( "Brick" ) );
+		if (onFinalBrick != null) {
+			onFinalBrick();
+		}
 	}
 }

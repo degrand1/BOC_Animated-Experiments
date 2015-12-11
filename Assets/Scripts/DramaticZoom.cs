@@ -2,10 +2,12 @@
 using System.Collections;
 
 public class DramaticZoom : MonoBehaviour {
+	private Rigidbody ballRigidBody;
 	private GameObject ball;
 	private float acc = 1;
 	private Vector3 originalPos;
 	private float originalSize;
+	private bool predict = false;
 
 	public float duration = 1;
 
@@ -20,12 +22,26 @@ public class DramaticZoom : MonoBehaviour {
 		acc = duration;
 		originalPos = transform.position;
 		ball = GameObject.FindGameObjectWithTag ("Ball");
+		if (ball != null) {
+			ballRigidBody = ball.GetComponent<Rigidbody> ();
+		}
 		originalSize = Camera.main.orthographicSize;
+
+		GameManager.instance.onFinalBrick += activateTrajectoryPrediction;
+	}
+
+	void activateTrajectoryPrediction() {
+		predict = true;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		if ( ball == null ) ball = GameObject.FindGameObjectWithTag ("Ball");
+		if (ball == null) {
+			ball = GameObject.FindGameObjectWithTag ("Ball");
+			if ( ball != null ) {
+				ballRigidBody = ball.GetComponent<Rigidbody> ();
+			}
+		}
 		if (acc < duration) {
 			acc += Time.deltaTime / Time.timeScale;
 			float eased = Easing.Sine.InOut (acc / duration); // between 0 and 1
@@ -42,9 +58,30 @@ public class DramaticZoom : MonoBehaviour {
 			Camera.main.orthographicSize = originalSize;
 		}
 
-		// for debug use only DELETEME
-		if (Input.GetKey (KeyCode.LeftShift) && acc >= 1) {
+		if ( acc >= duration && WillHitBrick() ) {
 			acc = 0;
+		}
+	}
+
+	bool WillHitBrick() {
+		if (!predict) {
+			return false;
+		}
+
+		if (Brick.bricksLeft < 1) {
+			predict = false;
+			return false;
+		}
+
+		Collider brickCollider = GameObject.FindGameObjectWithTag( "Brick" ).GetComponent<Collider>();
+
+		if (brickCollider != null) {
+			Ray ray = new Ray (ball.transform.position, ballRigidBody.velocity);
+			float dist;
+			bool hits = brickCollider.bounds.IntersectRay(ray, out dist);
+			return hits && dist <= ballRigidBody.velocity.magnitude * duration;
+		} else {
+			return false;
 		}
 	}
 }
