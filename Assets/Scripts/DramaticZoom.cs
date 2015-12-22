@@ -55,7 +55,6 @@ public class DramaticZoom : MonoBehaviour {
 			                                  , weight );
 			Camera.main.orthographicSize = Mathf.Lerp( originalSize * dramaticZoom, originalSize, weight );
 		} else {
-			transform.position = originalPos;
 			Camera.main.orthographicSize = originalSize;
 		}
 
