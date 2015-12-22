@@ -27,7 +27,8 @@ public class DramaticZoom : MonoBehaviour {
 		}
 		originalSize = Camera.main.orthographicSize;
 
-		GameManager.instance.onFinalBrick += activateTrajectoryPrediction;
+		if ( GameManager.instance.numBricks == 1 ) activateTrajectoryPrediction();
+		else GameManager.instance.onFinalBrick += activateTrajectoryPrediction;
 	}
 
 	void activateTrajectoryPrediction() {
@@ -78,8 +79,10 @@ public class DramaticZoom : MonoBehaviour {
 		if (brickCollider != null) {
 			Ray ray = new Ray (ball.transform.position, ballRigidBody.velocity);
 			float dist;
-			bool hits = brickCollider.bounds.IntersectRay(ray, out dist);
-			return hits && dist <= ballRigidBody.velocity.magnitude * duration;
+			Bounds bb = brickCollider.bounds;
+			bb.Expand( bb.size );
+			bool hits = bb.IntersectRay(ray, out dist);
+			return hits && dist <= ballRigidBody.velocity.magnitude * duration / 4;
 		} else {
 			return false;
 		}

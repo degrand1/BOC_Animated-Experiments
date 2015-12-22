@@ -39,6 +39,9 @@ public class GameManager : MonoBehaviour {
 	public delegate void FinalBrickListener();
 	public event FinalBrickListener onFinalBrick;
 
+	// expose bricks variable, but only a getter
+	public int numBricks { get { return bricks; } }
+
 	void RefillSongs()
 	{
 		if( SongIndexList.Count > 0) return;
@@ -105,6 +108,7 @@ public class GameManager : MonoBehaviour {
 				bricks++;
 			}
 		}
+
 		playerClone = Instantiate( player, transform.position, Quaternion.identity ) as GameObject;
 		//livesText is part of the Canvas, which gets deleted between scenes
 		livesText = GameObject.FindGameObjectWithTag( "LivesText" ).GetComponent<Text>();
