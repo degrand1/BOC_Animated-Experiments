@@ -21,6 +21,9 @@ public class Brick : MonoBehaviour {
 	void Start()
 	{
 		bricksLeft++;
+		if (GameObject.FindGameObjectsWithTag ("Brick").Length == 1) {
+			GameManager.instance.PenultimateBrickDestroyed ();
+		}
 	}
 
 	void OnCollisionEnter( Collision other)
