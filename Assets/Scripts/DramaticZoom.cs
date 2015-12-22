@@ -69,7 +69,7 @@ public class DramaticZoom : MonoBehaviour {
 			return false;
 		}
 
-		if (Brick.bricksLeft < 1) {
+		if ( GameManager.instance.numBricks < 1 ) {
 			predict = false;
 			return false;
 		}

@@ -177,6 +177,10 @@ public class GameManager : MonoBehaviour {
 		{
 			Invoke ( "LoadNextLevel", loadNextLevelDelay );
 		}
+		else if ( bricks == 1 )
+		{
+			PenultimateBrickDestroyed();
+		}
 	}
 
 	public void LoseLife()

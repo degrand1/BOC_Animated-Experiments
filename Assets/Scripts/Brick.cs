@@ -16,14 +16,9 @@ public class Brick : MonoBehaviour {
 	public int hitsToBreak = 1;
 	public bool canBreak = true;
 	public PowerUp brickPowerUp = PowerUp.NONE;
-	public static int bricksLeft = 0;
 
 	void Start()
 	{
-		bricksLeft++;
-		if (GameObject.FindGameObjectsWithTag ("Brick").Length == 1) {
-			GameManager.instance.PenultimateBrickDestroyed ();
-		}
 	}
 
 	void OnCollisionEnter( Collision other)
@@ -49,11 +44,6 @@ public class Brick : MonoBehaviour {
 					GameManager.instance.DestroyBrick();
 					GameManager.instance.GetAudioSource().PlayOneShot( impactSound );
 					Destroy(gameObject);
-
-					bricksLeft--;
-					if ( bricksLeft == 1 ) {
-						GameManager.instance.PenultimateBrickDestroyed();
-					}
 				}
 				else
 				{
