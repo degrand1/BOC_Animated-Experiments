@@ -1,48 +1,48 @@
 ﻿Shader "Custom/bloom" {
-	Properties {
-		_MainTex ("Screen Texture", 2D) = "white" {}
+    Properties {
+        _MainTex ("Screen Texture", 2D) = "white" {}
         _HighlightThreshold( "Highlight Threshold", Float) = 0.4
-		_Intensity("Intensity", Float) = 1.1
+        _Intensity("Intensity", Float) = 1.1
 
         _DOFFactor( "DOFFactor", Range( 0.0, 1.0 ) ) = 0.0
         _DOFDepth( "DOFDepth", Float ) = 0.0
         _DOFRange( "DOFRange", Float ) = 0.5
-	}
+    }
 
-	SubShader {
+    SubShader {
         Pass {
             ZTest Always Cull Off ZWrite Off
             Blend Off
             Name "DOF horizontal pass"
 
-			CGPROGRAM
-	        #pragma vertex vert
-	        #pragma fragment frag
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
             #pragma fragmentoption ARB_precision_hint_fastest
-	        #include "UnityCG.cginc"
+            #include "UnityCG.cginc"
 
-	        sampler2D _MainTex;
+            sampler2D _MainTex;
             sampler2D _CameraDepthTexture;
-	        float4 _MainTex_TexelSize;
+            float4 _MainTex_TexelSize;
 
             fixed _DOFFactor;
             fixed _DOFRange;
             fixed _DOFDepth;
 
-	        struct VS_OUT {
-	            float4 vertex : SV_POSITION;
-	            float2 uv     : TEXCOORD0;
-	        };
-	       
-	        VS_OUT vert( appdata_img v )
+            struct VS_OUT {
+                float4 vertex : SV_POSITION;
+                float2 uv     : TEXCOORD0;
+            };
+           
+            VS_OUT vert( appdata_img v )
             {
-	            VS_OUT o;
-	           
-	            o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
-	            o.uv = v.texcoord;
-	           
-	            return o;
-	        }
+                VS_OUT o;
+               
+                o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+                o.uv = v.texcoord;
+               
+                return o;
+            }
 
             fixed4 DOF_horizontal( fixed4 incolor, fixed2 uv )
             {
@@ -65,13 +65,13 @@
                 return incolor;
             }
 
-	        fixed4 frag (VS_OUT i) : COLOR
-	        {
+            fixed4 frag (VS_OUT i) : COLOR
+            {
                 float4 incolor = tex2D( _MainTex, i.uv);
                 return DOF_horizontal( incolor, i.uv );
-	        }
-	       
-	        ENDCG
+            }
+           
+            ENDCG
         }
 
         GrabPass {}
@@ -81,34 +81,34 @@
             Blend Off
             Name "DOF vertical pass"
 
-			CGPROGRAM
-	        #pragma vertex vert
-	        #pragma fragment frag
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
             #pragma fragmentoption ARB_precision_hint_fastest
-	        #include "UnityCG.cginc"
+            #include "UnityCG.cginc"
 
-	        sampler2D _GrabTexture;
+            sampler2D _GrabTexture;
             sampler2D _CameraDepthTexture;
-	        float4 _GrabTexture_TexelSize;
+            float4 _GrabTexture_TexelSize;
 
             fixed _DOFFactor;
             fixed _DOFRange;
             fixed _DOFDepth;
 
-	        struct VS_OUT {
-	            float4 vertex : SV_POSITION;
-	            float2 uv     : TEXCOORD0;
-	        };
-	       
-	        VS_OUT vert( appdata_img v )
+            struct VS_OUT {
+                float4 vertex : SV_POSITION;
+                float2 uv     : TEXCOORD0;
+            };
+           
+            VS_OUT vert( appdata_img v )
             {
-	            VS_OUT o;
-	           
-	            o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
-	            o.uv = v.texcoord;
-	           
-	            return o;
-	        }
+                VS_OUT o;
+               
+                o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+                o.uv = v.texcoord;
+               
+                return o;
+            }
 
             fixed4 DOF_vertical( fixed4 incolor, fixed2 uv )
             {
@@ -131,51 +131,51 @@
                 return incolor;
             }
 
-	        fixed4 frag (VS_OUT i) : COLOR
-	        {
+            fixed4 frag (VS_OUT i) : COLOR
+            {
                 float4 incolor = tex2D( _GrabTexture, i.uv);
                 return DOF_vertical( incolor, i.uv );
-	        }
-	       
-	        ENDCG
+            }
+           
+            ENDCG
         }
 
         GrabPass {}
 
-		Pass {
+        Pass {
             ZTest Always Cull Off ZWrite Off
             Blend One One
             Name "Bloom pass"
 
-			CGPROGRAM
-	        #pragma vertex vert
-	        #pragma fragment frag
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
             #pragma fragmentoption ARB_precision_hint_fastest
-	        #include "UnityCG.cginc"
+            #include "UnityCG.cginc"
 
-	        sampler2D _MainTex;
-	        float4 _MainTex_TexelSize;
+            sampler2D _MainTex;
+            float4 _MainTex_TexelSize;
 
-	        sampler2D _GrabTexture;
-	        float4 _GrabTexture_TexelSize;
+            sampler2D _GrabTexture;
+            float4 _GrabTexture_TexelSize;
 
-	        fixed _Intensity;
+            fixed _Intensity;
             fixed _HighlightThreshold;
 
-	        struct VS_OUT {
-	            float4 vertex : SV_POSITION;
-	            float2 uv     : TEXCOORD0;
-	        };
-	       
-	        VS_OUT vert( appdata_img v )
+            struct VS_OUT {
+                float4 vertex : SV_POSITION;
+                float2 uv     : TEXCOORD0;
+            };
+           
+            VS_OUT vert( appdata_img v )
             {
-	            VS_OUT o;
-	           
-	            o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
-	            o.uv = v.texcoord;
-	           
-	            return o;
-	        }
+                VS_OUT o;
+               
+                o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+                o.uv = v.texcoord;
+               
+                return o;
+            }
 
             float4 highlight( float4 pix )
             {
@@ -185,34 +185,34 @@
 
             fixed4 bloom( fixed4 incolor, fixed2 uv )
             {
-	        	float4 o = float4( 0, 0, 0, 1 );
+                float4 o = float4( 0, 0, 0, 1 );
                 fixed pixelw = 1.0/_ScreenParams.x;
 
-	        	// x taps - interpolate
-				o += highlight( tex2D( _GrabTexture, float2( uv.x - 3.0 * pixelw, uv.y ) ) ) * 0.09;
-				o += highlight( tex2D( _GrabTexture, float2( uv.x - 1.5 * pixelw, uv.y ) ) ) * 0.15;
-	            o += incolor * 0.16;
-				o += highlight( tex2D( _GrabTexture, float2( uv.x + 1.5 * pixelw, uv.y ) ) ) * 0.15;
-				o += highlight( tex2D( _GrabTexture, float2( uv.x + 3.0 * pixelw, uv.y ) ) ) * 0.09;
+                // x taps - interpolate
+                o += highlight( tex2D( _GrabTexture, float2( uv.x - 3.0 * pixelw, uv.y ) ) ) * 0.09;
+                o += highlight( tex2D( _GrabTexture, float2( uv.x - 1.5 * pixelw, uv.y ) ) ) * 0.15;
+                o += incolor * 0.16;
+                o += highlight( tex2D( _GrabTexture, float2( uv.x + 1.5 * pixelw, uv.y ) ) ) * 0.15;
+                o += highlight( tex2D( _GrabTexture, float2( uv.x + 3.0 * pixelw, uv.y ) ) ) * 0.09;
    
-	            // y taps - interpolate
+                // y taps - interpolate
                 fixed pixelh = 1.0/_ScreenParams.y;
-				o += highlight( tex2D( _GrabTexture, float2( uv.x, uv.y - 3.0 * pixelh ) ) ) * 0.09;
-				o += highlight( tex2D( _GrabTexture, float2( uv.x, uv.y - 1.5 * pixelw ) ) ) * 0.15;
-	            o += incolor * 0.16;
-				o += highlight( tex2D( _GrabTexture, float2( uv.x, uv.y + 1.5 * pixelh ) ) ) * 0.15;
-				o += highlight( tex2D( _GrabTexture, float2( uv.x, uv.y + 3.0 * pixelh ) ) ) * 0.09;
+                o += highlight( tex2D( _GrabTexture, float2( uv.x, uv.y - 3.0 * pixelh ) ) ) * 0.09;
+                o += highlight( tex2D( _GrabTexture, float2( uv.x, uv.y - 1.5 * pixelw ) ) ) * 0.15;
+                o += incolor * 0.16;
+                o += highlight( tex2D( _GrabTexture, float2( uv.x, uv.y + 1.5 * pixelh ) ) ) * 0.15;
+                o += highlight( tex2D( _GrabTexture, float2( uv.x, uv.y + 3.0 * pixelh ) ) ) * 0.09;
 
-	            return o * _Intensity + incolor;
+                return o * _Intensity + incolor;
             }
 
-	        fixed4 frag (VS_OUT i) : COLOR
-	        {
+            fixed4 frag (VS_OUT i) : COLOR
+            {
                 float4 incolor = tex2D( _GrabTexture, i.uv);
-	        	return bloom( incolor, i.uv );
-	        }
-	       
-	        ENDCG
+                return bloom( incolor, i.uv );
+            }
+           
+            ENDCG
         }
-	}
+    }
 }
