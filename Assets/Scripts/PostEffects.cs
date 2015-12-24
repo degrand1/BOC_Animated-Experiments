@@ -3,6 +3,7 @@ using System.Collections;
 
 public class PostEffects : MonoBehaviour {
 	public Shader postFXShader = null;
+	public Shader DOFShader = null;
 	private Material mat;
 
 	// Use this for initialization
