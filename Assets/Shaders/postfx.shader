@@ -4,7 +4,7 @@
         _HighlightThreshold( "Highlight Threshold", Float) = 0.4
 		_Intensity("Intensity", Float) = 1.1
 
-        _DOFFactor( "DOFFactor", Range( 0.0, 1.0 ) ) = 0.1
+        _DOFFactor( "DOFFactor", Range( 0.0, 1.0 ) ) = 0.0
         _DOFDepth( "DOFDepth", Float ) = 0.0
         _DOFRange( "DOFRange", Float ) = 0.5
 	}

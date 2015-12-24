@@ -4,7 +4,7 @@ using System.Collections;
 public class PostEffects : MonoBehaviour {
 	public Shader postFXShader = null;
 
-	private Material mat;
+	public Material mat;
 
 	// Use this for initialization
 	void Start () {

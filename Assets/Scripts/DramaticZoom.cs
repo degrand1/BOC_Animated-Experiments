@@ -11,6 +11,9 @@ public class DramaticZoom : MonoBehaviour {
 
 	public float duration = 1;
 
+	private PostEffects pfx;
+	private Material pfxMat;
+
 	[Range(0.0f, 1.0f)]
 	public float dramaticZoom = 0.2f;
 
@@ -29,6 +32,12 @@ public class DramaticZoom : MonoBehaviour {
 
 		if ( GameManager.instance.numBricks == 1 ) activateTrajectoryPrediction();
 		else GameManager.instance.onFinalBrick += activateTrajectoryPrediction;
+
+		pfx = GetComponent<PostEffects>();
+
+		if ( pfx != null ) {
+			pfxMat = pfx.mat;
+		}
 	}
 
 	void activateTrajectoryPrediction() {
@@ -43,6 +52,11 @@ public class DramaticZoom : MonoBehaviour {
 				ballRigidBody = ball.GetComponent<Rigidbody> ();
 			}
 		}
+
+		if ( pfxMat == null && pfx != null ) {
+			pfxMat = GetComponent<PostEffects>().mat;
+		}
+
 		if (acc < duration) {
 			acc += Time.deltaTime / Time.timeScale;
 			float eased = Easing.Sine.InOut (acc / duration); // between 0 and 1
@@ -54,6 +68,9 @@ public class DramaticZoom : MonoBehaviour {
 			                                  , originalPos
 			                                  , weight );
 			Camera.main.orthographicSize = Mathf.Lerp( originalSize * dramaticZoom, originalSize, weight );
+			if ( pfxMat != null ) {
+				pfxMat.SetFloat( "_DOFFactor", 1 - weight );
+			}
 		} else {
 			Camera.main.orthographicSize = originalSize;
 		}
