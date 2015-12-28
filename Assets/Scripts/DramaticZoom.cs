@@ -30,8 +30,11 @@ public class DramaticZoom : MonoBehaviour {
     }
     originalSize = Camera.main.orthographicSize;
 
-    if ( GameManager.instance.numBricks == 1 ) activateTrajectoryPrediction();
-    else GameManager.instance.onFinalBrick += activateTrajectoryPrediction;
+    if ( GameManager.instance.numBricks == 1 ) {
+			activateTrajectoryPrediction();
+		}
+
+    GameManager.instance.onBrickDestroyed += onBrickDestroyed;
 
     pfx = GetComponent<PostEffects>();
 
@@ -39,6 +42,17 @@ public class DramaticZoom : MonoBehaviour {
       pfxMat = pfx.mat;
     }
   }
+
+	void onBrickDestroyed( int bricksLeft ) {
+		if ( bricksLeft == 1 ) {
+			activateTrajectoryPrediction();
+	  } else if ( bricksLeft == 0 ) {
+			if ( acc < duration ) {
+				// end zoom early, but don't snap
+				acc += 2 * ( duration / 2  - acc );
+			}
+		}
+	}
 
   void activateTrajectoryPrediction() {
     predict = true;

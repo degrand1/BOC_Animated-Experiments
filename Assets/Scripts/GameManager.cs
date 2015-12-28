@@ -36,8 +36,9 @@ public class GameManager : MonoBehaviour {
 	
 	public delegate void BallBounceListener();
 	public event BallBounceListener onBallBounce;
-	public delegate void FinalBrickListener();
-	public event FinalBrickListener onFinalBrick;
+
+	public delegate void BrickDestroyedListener( int bricksLeft );
+	public event BrickDestroyedListener onBrickDestroyed;
 
 	// expose bricks variable, but only a getter
 	public int numBricks { get { return bricks; } }
@@ -173,13 +174,14 @@ public class GameManager : MonoBehaviour {
 	public void DestroyBrick()
 	{
 		bricks--;
+
+		if (onBrickDestroyed != null) {
+			onBrickDestroyed( bricks );
+		}
+
 		if( bricks < 1 )
 		{
 			Invoke ( "LoadNextLevel", loadNextLevelDelay );
-		}
-		else if ( bricks == 1 )
-		{
-			PenultimateBrickDestroyed();
 		}
 	}
 
@@ -208,12 +210,5 @@ public class GameManager : MonoBehaviour {
 	public void BallBounced()
 	{
 		if ( onBallBounce != null ) onBallBounce();
-	}
-
-	public void PenultimateBrickDestroyed()
-	{
-		if (onFinalBrick != null) {
-			onFinalBrick();
-		}
 	}
 }
