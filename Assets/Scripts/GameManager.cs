@@ -32,7 +32,8 @@ public class GameManager : MonoBehaviour {
 	new private AudioSource audio = null;
 	private PersistentData data = null;
 	private Text livesText;
-	private LinkedList<int> SongIndexList = null;
+	private int[] songIndexList;
+	private int currentSongIndex;
 	
 	public delegate void BallBounceListener();
 	public event BallBounceListener onBallBounce;
@@ -43,11 +44,20 @@ public class GameManager : MonoBehaviour {
 	// expose bricks variable, but only a getter
 	public int numBricks { get { return bricks; } }
 
-	void RefillSongs()
+	void ShuffleSongs()
 	{
-		if( SongIndexList.Count > 0) return;
+		if( songs.Length <= 0) return;
 		for(int i = 0; i < songs.Length; i++ )
-			SongIndexList.AddLast( i );
+			songIndexList[i] = i;
+		//Shuffle the index list
+		for(int i = songs.Length-1; i > 0; i--)
+		{
+			int randomIndex = Random.Range(0, i);
+			int temp = songIndexList[randomIndex];
+			songIndexList[randomIndex] = songIndexList[i];
+			songIndexList[i] = temp;
+		}
+		currentSongIndex = 0;
 	}
 
 	void PlaySong()
@@ -56,17 +66,12 @@ public class GameManager : MonoBehaviour {
 		{
 			audio = GetComponent<AudioSource>();
 		}
-		if( SongIndexList == null )
+		if( currentSongIndex >= songs.Length )
 		{
-			SongIndexList = new LinkedList<int>();
+			ShuffleSongs();
 		}
-		RefillSongs();
-		int randomIndex = Random.Range (0, SongIndexList.Count);
-		int[] intArray = new int[SongIndexList.Count];
-		SongIndexList.CopyTo(intArray, 0);
-		LinkedListNode<int> node = SongIndexList.Find(intArray[randomIndex]);
-		SongIndexList.Remove(node);
-		currentClip = node.Value;
+		
+		currentClip = songIndexList[currentSongIndex++];
 		audio.clip = songs[currentClip].songFile;
 		audio.Play();
 		//Play the next song after this one ends
@@ -88,7 +93,12 @@ public class GameManager : MonoBehaviour {
 		if( instance == null )
 		{
 			instance = this;
-			PlaySong();
+            if (songs.Length > 0)
+            {
+                songIndexList = new int[songs.Length];
+                ShuffleSongs();
+                PlaySong();
+            }
 		}
 		else if( instance != this )
 		{
