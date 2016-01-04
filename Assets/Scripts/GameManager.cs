@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour {
 
 	public GameObject deathParticles;
 	public GameObject player;
+	public GameObject ball;
 	public string nextLevel;
 	public float loadNextLevelDelay = 1.0f;
 	public float reviveDelay = 1.0f;
@@ -120,7 +121,7 @@ public class GameManager : MonoBehaviour {
 			}
 		}
 
-		playerClone = Instantiate( player, transform.position, Quaternion.identity ) as GameObject;
+		RevivePlayer();
 		//livesText is part of the Canvas, which gets deleted between scenes
 		livesText = GameObject.FindGameObjectWithTag( "LivesText" ).GetComponent<Text>();
 		livesText.text = "Lives: " + data.lives;
@@ -174,6 +175,9 @@ public class GameManager : MonoBehaviour {
 	void RevivePlayer()
 	{
 		playerClone = Instantiate( player, transform.position, Quaternion.identity ) as GameObject;
+		Vector3 ballSpawnPosition = new Vector3( transform.position.x, transform.position.y + 1.74f, 0f );
+		GameObject BallClone = Instantiate( ball, ballSpawnPosition, Quaternion.identity ) as GameObject;
+		BallClone.transform.parent = playerClone.transform; 
 	}
 
 	public AudioSource GetAudioSource()
