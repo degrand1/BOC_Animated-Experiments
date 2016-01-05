@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour {
 
 	public GameObject deathParticles;
 	public GameObject player;
+	public GameObject ball;
 	public string nextLevel;
 	public float loadNextLevelDelay = 1.0f;
 	public float reviveDelay = 1.0f;
@@ -32,18 +33,32 @@ public class GameManager : MonoBehaviour {
 	new private AudioSource audio = null;
 	private PersistentData data = null;
 	private Text livesText;
-	private LinkedList<int> SongIndexList = null;
+	private int[] songIndexList;
+	private int currentSongIndex;
 	
 	public delegate void BallBounceListener();
 	public event BallBounceListener onBallBounce;
-	public delegate void FinalBrickListener();
-	public event FinalBrickListener onFinalBrick;
 
-	void RefillSongs()
+	public delegate void BrickDestroyedListener( int bricksLeft );
+	public event BrickDestroyedListener onBrickDestroyed;
+
+	// expose bricks variable, but only a getter
+	public int numBricks { get { return bricks; } }
+
+	void ShuffleSongs()
 	{
-		if( SongIndexList.Count > 0) return;
+		if( songs.Length <= 0) return;
 		for(int i = 0; i < songs.Length; i++ )
-			SongIndexList.AddLast( i );
+			songIndexList[i] = i;
+		//Shuffle the index list
+		for(int i = songs.Length-1; i > 0; i--)
+		{
+			int randomIndex = Random.Range(0, i);
+			int temp = songIndexList[randomIndex];
+			songIndexList[randomIndex] = songIndexList[i];
+			songIndexList[i] = temp;
+		}
+		currentSongIndex = 0;
 	}
 
 	void PlaySong()
@@ -52,17 +67,12 @@ public class GameManager : MonoBehaviour {
 		{
 			audio = GetComponent<AudioSource>();
 		}
-		if( SongIndexList == null )
+		if( currentSongIndex >= songs.Length )
 		{
-			SongIndexList = new LinkedList<int>();
+			ShuffleSongs();
 		}
-		RefillSongs();
-		int randomIndex = Random.Range (0, SongIndexList.Count);
-		int[] intArray = new int[SongIndexList.Count];
-		SongIndexList.CopyTo(intArray, 0);
-		LinkedListNode<int> node = SongIndexList.Find(intArray[randomIndex]);
-		SongIndexList.Remove(node);
-		currentClip = node.Value;
+		
+		currentClip = songIndexList[currentSongIndex++];
 		audio.clip = songs[currentClip].songFile;
 		audio.Play();
 		//Play the next song after this one ends
@@ -84,7 +94,12 @@ public class GameManager : MonoBehaviour {
 		if( instance == null )
 		{
 			instance = this;
-			PlaySong();
+            if (songs.Length > 0)
+            {
+                songIndexList = new int[songs.Length];
+                ShuffleSongs();
+                PlaySong();
+            }
 		}
 		else if( instance != this )
 		{
@@ -105,7 +120,8 @@ public class GameManager : MonoBehaviour {
 				bricks++;
 			}
 		}
-		playerClone = Instantiate( player, transform.position, Quaternion.identity ) as GameObject;
+
+		RevivePlayer();
 		//livesText is part of the Canvas, which gets deleted between scenes
 		livesText = GameObject.FindGameObjectWithTag( "LivesText" ).GetComponent<Text>();
 		livesText.text = "Lives: " + data.lives;
@@ -159,6 +175,9 @@ public class GameManager : MonoBehaviour {
 	void RevivePlayer()
 	{
 		playerClone = Instantiate( player, transform.position, Quaternion.identity ) as GameObject;
+		Vector3 ballSpawnPosition = new Vector3( transform.position.x, transform.position.y + 1.74f, 0f );
+		GameObject BallClone = Instantiate( ball, ballSpawnPosition, Quaternion.identity ) as GameObject;
+		BallClone.transform.parent = playerClone.transform; 
 	}
 
 	public AudioSource GetAudioSource()
@@ -169,6 +188,11 @@ public class GameManager : MonoBehaviour {
 	public void DestroyBrick()
 	{
 		bricks--;
+
+		if (onBrickDestroyed != null) {
+			onBrickDestroyed( bricks );
+		}
+
 		if( bricks < 1 )
 		{
 			Invoke ( "LoadNextLevel", loadNextLevelDelay );
@@ -200,12 +224,5 @@ public class GameManager : MonoBehaviour {
 	public void BallBounced()
 	{
 		if ( onBallBounce != null ) onBallBounce();
-	}
-
-	public void PenultimateBrickDestroyed()
-	{
-		if (onFinalBrick != null) {
-			onFinalBrick();
-		}
 	}
 }

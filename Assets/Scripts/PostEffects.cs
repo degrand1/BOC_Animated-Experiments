@@ -3,17 +3,18 @@ using System.Collections;
 
 public class PostEffects : MonoBehaviour {
 	public Shader postFXShader = null;
-	private Material mat;
+
+	public Material mat;
 
 	// Use this for initialization
 	void Start () {
 		if (postFXShader)
 		{
-			mat = new Material(postFXShader);
+			mat = new Material( postFXShader );
 			mat.name = "PostFXMaterial";
 			mat.hideFlags = HideFlags.HideAndDontSave;
+			Camera.main.depthTextureMode = DepthTextureMode.Depth;
 		}
-		
 		else
 		{
 			Debug.LogWarning(gameObject.name + ": Post FX Shader is not assigned. Disabling...", this.gameObject);
